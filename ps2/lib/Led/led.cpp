@@ -15,13 +15,16 @@ void setup_led()
 void led()
 {
     led_onoff();
-    led_flood();
-    led_temperature();
+    if (get_system_isOn())
+    {
+        led_flood();
+        led_temperature();
+    }
 }
 
 void led_onoff()
 {
-    if (system_isOn)
+    if (get_system_isOn())
         digitalWrite(LED_ONOFF, HIGH);
     else
         digitalWrite(LED_ONOFF, LOW);
@@ -29,7 +32,7 @@ void led_onoff()
 
 void led_flood()
 {
-    switch (system_flood)
+    switch (get_system_flood())
     {
         case DRY: // low humidity
             digitalWrite(LED_FLOOD, LOW);
@@ -53,7 +56,7 @@ void led_flood()
 
 void led_temperature()
 {
-    switch (system_temperature)
+    switch (get_system_temperature())
     {
         case LO:
             temp[0] = HIGH;  temp[1] = LOW; temp[2] = LOW;

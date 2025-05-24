@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#define LM35_VOUT 14    // A0
+#define LM35_VOUT A0
 
 void setup_temperature();
 float get_temperature();
