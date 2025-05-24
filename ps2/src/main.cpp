@@ -15,4 +15,5 @@ void setup()
 void loop()
 {
   led();
+  read_serial();
 }
