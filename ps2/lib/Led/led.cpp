@@ -2,12 +2,12 @@
 
 void setup_led()
 {
-    pinMode(PORT_LED_ONOFF, OUTPUT);
-    pinMode(PORT_LED_FLOOD, OUTPUT);
+    pinMode(LED_ONOFF, OUTPUT);
+    pinMode(LED_FLOOD, OUTPUT);
     
-    pinMode(PORT_LED_LOW, OUTPUT);
-    pinMode(PORT_LED_GOOD, OUTPUT);
-    pinMode(PORT_LED_HIGH, OUTPUT);
+    pinMode(LED_LOW, OUTPUT);
+    pinMode(LED_GOOD, OUTPUT);
+    pinMode(LED_HIGH, OUTPUT);
     for (int i = 0; i < 3; i++)
         temp[i] = 0;
 }
@@ -22,9 +22,9 @@ void led()
 void led_onoff()
 {
     if (system_isOn)
-        digitalWrite(PORT_LED_ONOFF, HIGH);
+        digitalWrite(LED_ONOFF, HIGH);
     else
-        digitalWrite(PORT_LED_ONOFF, LOW);
+        digitalWrite(LED_ONOFF, LOW);
 }
 
 void led_flood()
@@ -32,18 +32,18 @@ void led_flood()
     switch (system_flood)
     {
         case DRY: // low humidity
-            digitalWrite(PORT_LED_FLOOD, LOW);
+            digitalWrite(LED_FLOOD, LOW);
             break;
         case MEDIUM: // moderate humidity
-            digitalWrite(PORT_LED_FLOOD, HIGH);
+            digitalWrite(LED_FLOOD, HIGH);
             delay(2000);
-            digitalWrite(PORT_LED_FLOOD, LOW);
+            digitalWrite(LED_FLOOD, LOW);
             delay(2000);
             break;
         case FLOOD: // high humidity/flood detected
-            digitalWrite(PORT_LED_FLOOD, HIGH);
+            digitalWrite(LED_FLOOD, HIGH);
             delay(250);
-            digitalWrite(PORT_LED_FLOOD, LOW);
+            digitalWrite(LED_FLOOD, LOW);
             delay(250);
             break;
 
@@ -68,7 +68,7 @@ void led_temperature()
         default: break;
     }
 
-    digitalWrite(PORT_LED_LOW, temp[0]);
-    digitalWrite(PORT_LED_GOOD, temp[1]);
-    digitalWrite(PORT_LED_HIGH, temp[2]);
+    digitalWrite(LED_LOW, temp[0]);
+    digitalWrite(LED_GOOD, temp[1]);
+    digitalWrite(LED_HIGH, temp[2]);
 }

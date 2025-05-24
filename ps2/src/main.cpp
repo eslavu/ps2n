@@ -3,6 +3,9 @@
 #include "led.h"
 #include "cloud.h"
 
+#include "temperature.h"
+#include "humidity.h"
+
 void setup()
 {
   Serial.begin(9600);

@@ -4,12 +4,12 @@
 #include <Arduino.h>
 #include "cloud.h"
 
-#define PORT_LED_ONOFF LED_BUILTIN
-#define PORT_LED_FLOOD 2
+#define LED_ONOFF LED_BUILTIN
+#define LED_FLOOD 2
 
-#define PORT_LED_LOW 5
-#define PORT_LED_GOOD 6
-#define PORT_LED_HIGH 7
+#define LED_LOW 5
+#define LED_GOOD 6
+#define LED_HIGH 7
 
 static int temp[3];
 
