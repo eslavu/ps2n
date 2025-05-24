@@ -1,13 +1,4 @@
-#include <Arduino.h>
-
-#include "cloud.h"
-
-#define PORT_LED_ONOFF LED_BUILTIN
-#define PORT_LED_FLOOD 2
-
-#define PORT_LED_LOW 5
-#define PORT_LED_GOOD 6
-#define PORT_LED_HIGH 7
+#include "led.h"
 
 void setup_led()
 {
@@ -17,6 +8,8 @@ void setup_led()
     pinMode(PORT_LED_LOW, OUTPUT);
     pinMode(PORT_LED_GOOD, OUTPUT);
     pinMode(PORT_LED_HIGH, OUTPUT);
+    for (int i = 0; i < 3; i++)
+        temp[i] = 0;
 }
 
 void led()
@@ -63,12 +56,19 @@ void led_temperature()
     switch (system_temperature)
     {
         case LO:
+            temp[0] = HIGH;  temp[1] = LOW; temp[2] = LOW;
             break;
         case GOOD:
+            temp[0] = LOW;  temp[1] = HIGH; temp[2] = LOW;
             break;
         case HI:
+            temp[0] = LOW;  temp[1] = LOW; temp[2] = HIGH;
             break;
 
         default: break;
     }
+
+    digitalWrite(PORT_LED_LOW, temp[0]);
+    digitalWrite(PORT_LED_GOOD, temp[1]);
+    digitalWrite(PORT_LED_HIGH, temp[2]);
 }
