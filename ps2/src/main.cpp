@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
-// put function declarations here:
-int myFunction(int, int);
+#include "led.h"
+#include "cloud.h"
 
 void setup()
 {
@@ -11,6 +11,5 @@ void setup()
 
 void loop()
 {
-  // put your main code here, to run repeatedly:
+  led();
 }
-
