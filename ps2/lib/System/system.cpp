@@ -1,6 +1,6 @@
-#include "cloud.h" 
+#include "system.hpp" 
 
-void read_serial()
+void System::read_serial()
 {
     // if (Serial.available())
     // {
@@ -17,10 +17,12 @@ void read_serial()
         switch (serial_input)
         {
             case '0':
-                system_isOn = 0;
+                Serial.println("sistem oprit!");
+                this->system_isOn = 0;
                 break;
             case '1':
-                system_isOn = 1;
+                Serial.println("sistem pornit!");
+                this->system_isOn = 1;
                 break;
 
             default: break;
@@ -28,11 +30,11 @@ void read_serial()
     }
 }
 
-inline int get_system_isOn()
-{ return system_isOn; }
+int System::get_system_isOn()
+{ return this->system_isOn; }
 
-inline Flood get_system_flood()
-{ return system_flood; }
+Flood System::get_system_flood()
+{ return this->system_flood; }
 
-inline Temperature get_system_temperature()
-{ return system_temperature; }
+Heat System::get_system_heat()
+{ return this->system_heat; }

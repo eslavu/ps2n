@@ -1,24 +1,24 @@
-#include "humidity.h"
+#include "humidity.hpp"
 
-void setup_humidity()
+void Humidity::setup()
 {
-    pinMode(DHT11_DATA, OUTPUT);
-    digitalWrite(DHT11_DATA, LOW);
+    pinMode(this->DHT11_DATA, OUTPUT);
+    digitalWrite(this->DHT11_DATA, LOW);
     delay(18);
 
-    digitalWrite(DHT11_DATA, HIGH);
-    pinMode(DHT11_DATA, INPUT_PULLUP);
+    digitalWrite(this->DHT11_DATA, HIGH);
+    pinMode(this->DHT11_DATA, INPUT_PULLUP);
 }
 
-int get_humidity()
+void Humidity::read()
 {
     unsigned long timeOn, timeOff;
     unsigned char dataBit, counterBit,
         dataByte[5], checkByte;
 
-    int humidity = 0;
+    this->humidity = 0;
 
-    setup_humidity();
+    this->setup();
     timeOff = pulseIn(DHT11_DATA, LOW);
 
     if (timeOff <= 84 && timeOff >= 76)
@@ -40,11 +40,12 @@ int get_humidity()
     checkByte = dataByte[0] + dataByte[1] + dataByte[2] + dataByte[3];
 
     if (checkByte == dataByte[4] && checkByte != 0)
-        humidity = (int)dataByte[0];
+        this->humidity = (int)dataByte[0];
 
     counterBit = 0;
     for (int i = 0; i < 5; i++)
         dataByte[i] = 0;
-
-    return humidity;
 }
+
+int Humidity::get()
+{ return this->humidity; }

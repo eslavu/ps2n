@@ -1,77 +1,91 @@
-#include "led.h"
+#include "led.hpp"
 
-void setup_led()
+Led::Led()
 {
-    pinMode(LED_ONOFF, OUTPUT);
-    pinMode(LED_FLOOD, OUTPUT);
+    pinMode(this->LED_ONOFF, OUTPUT);
+    pinMode(this->LED_FLOOD, OUTPUT);
     
-    pinMode(LED_LOW, OUTPUT);
-    pinMode(LED_GOOD, OUTPUT);
-    pinMode(LED_HIGH, OUTPUT);
-    for (int i = 0; i < 3; i++)
-        temp[i] = 0;
+    pinMode(this->LED_LOW, OUTPUT);
+    pinMode(this->LED_GOOD, OUTPUT);
+    pinMode(this->LED_HIGH, OUTPUT);
+    
+    this->reset_heat();
 }
 
-void led()
+void Led::led(int system_isOn, Flood system_flood, Heat system_heat)
 {
-    led_onoff();
-    if (get_system_isOn())
-    {
-        led_flood();
-        led_temperature();
-    }
+    this->system_isOn = system_isOn;
+    this->system_flood = system_flood;
+    this->system_heat = system_heat;
+
+    this->led_onoff();
+    this->led_flood();
+    this->led_heat();
 }
 
-void led_onoff()
+void Led::led_onoff()
 {
-    if (get_system_isOn())
-        digitalWrite(LED_ONOFF, HIGH);
+    if (this->system_isOn)
+        digitalWrite(this->LED_ONOFF, HIGH);
     else
-        digitalWrite(LED_ONOFF, LOW);
+        digitalWrite(this->LED_ONOFF, LOW);
 }
 
-void led_flood()
+void Led::led_flood()
 {
-    switch (get_system_flood())
-    {
-        case DRY: // low humidity
-            digitalWrite(LED_FLOOD, LOW);
-            break;
-        case MEDIUM: // moderate humidity
-            digitalWrite(LED_FLOOD, HIGH);
-            delay(2000);
-            digitalWrite(LED_FLOOD, LOW);
-            delay(2000);
-            break;
-        case FLOOD: // high humidity/flood detected
-            digitalWrite(LED_FLOOD, HIGH);
-            delay(250);
-            digitalWrite(LED_FLOOD, LOW);
-            delay(250);
-            break;
+    if (!this->system_isOn)
+        digitalWrite(this->LED_FLOOD, LOW);
 
-        default: break;
-    }
+    else
+        switch (this->system_flood)
+        {
+            case DRY:
+                digitalWrite(this->LED_FLOOD, LOW);
+                break;
+            case MEDIUM:
+                digitalWrite(this->LED_FLOOD, HIGH);
+                delay(2000);
+                digitalWrite(this->LED_FLOOD, LOW);
+                delay(2000);
+                break;
+            case FLOOD:
+                digitalWrite(this->LED_FLOOD, HIGH);
+                delay(250);
+                digitalWrite(this->LED_FLOOD, LOW);
+                delay(250);
+                break;
+
+            default: break;
+        }
 }
 
-void led_temperature()
+void Led::led_heat()
 {
-    switch (get_system_temperature())
-    {
-        case LO:
-            temp[0] = HIGH;  temp[1] = LOW; temp[2] = LOW;
-            break;
-        case GOOD:
-            temp[0] = LOW;  temp[1] = HIGH; temp[2] = LOW;
-            break;
-        case HI:
-            temp[0] = LOW;  temp[1] = LOW; temp[2] = HIGH;
-            break;
+    if (this->system_isOn)
+        switch (this->system_heat)
+        {
+            case LO:
+                this->heat[0] = HIGH;  this->heat[1] = LOW; this->heat[2] = LOW;
+                break;
+            case GOOD:
+                this->heat[0] = LOW;  this->heat[1] = HIGH; this->heat[2] = LOW;
+                break;
+            case HI:
+                this->heat[0] = LOW;  this->heat[1] = LOW; this->heat[2] = HIGH;
+                break;
 
-        default: break;
-    }
+            default: break;
+        }
+    else
+        this->reset_heat();
 
-    digitalWrite(LED_LOW, temp[0]);
-    digitalWrite(LED_GOOD, temp[1]);
-    digitalWrite(LED_HIGH, temp[2]);
+    digitalWrite(this->LED_LOW, this->heat[0]);
+    digitalWrite(this->LED_GOOD, this->heat[1]);
+    digitalWrite(this->LED_HIGH, this->heat[2]);
+}
+
+void Led::reset_heat()
+{
+    for (int i = 0; i < 3; i++)
+        this->heat[i] = 0;
 }

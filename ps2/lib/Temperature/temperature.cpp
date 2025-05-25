@@ -1,18 +1,19 @@
-#include "temperature.h"
+#include "temperature.hpp"
 
-void setup_temperature()
+Temperature::Temperature()
 {
-    pinMode(LM35_VOUT, INPUT);
+    pinMode(this->LM35_VOUT, INPUT);
 }
 
-float get_temperature()
+void Temperature::read()
 {
     int temp_read = 0;
-    float v, temperature;
+    float v;
 
     temp_read = analogRead(LM35_VOUT);
     v = (temp_read * 5) / 1024;
-    temperature = (v - 0.5) * 100;
-
-    return temperature;
+    this->temperature = (v - 0.5) * 100;
 }
+
+float Temperature::get()
+{ return this->temperature; }
