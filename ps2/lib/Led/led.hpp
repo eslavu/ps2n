@@ -7,12 +7,12 @@
 class Led
 {
 private:
-    const uint8_t LED_ONOFF = LED_BUILTIN;
-    const uint8_t LED_FLOOD = 2;
+    const uint8_t LED_ONOFF = LED_BUILTIN,
+        LED_FLOOD = 2;
 
-    const uint8_t LED_LOW = 5;
-    const uint8_t LED_GOOD = 6;
-    const uint8_t LED_HIGH = 7;
+    const uint8_t LED_LOW = 5,
+        LED_GOOD = 6,
+        LED_HIGH = 7;
     
     int heat[3];
     int system_isOn;

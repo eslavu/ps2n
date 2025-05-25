@@ -7,12 +7,10 @@ Temperature::Temperature()
 
 void Temperature::read()
 {
-    int temp_read = 0;
-    float v;
+    int adc_read = analogRead(LM35_VOUT);
 
-    temp_read = analogRead(LM35_VOUT);
-    v = (temp_read * 5) / 1024;
-    this->temperature = (v - 0.5) * 100;
+    this->temperature = adc_read * (ADC_VREF / ADC_RESOLUTION);
+    this->temperature = sma.next(this->temperature / 100);
 }
 
 float Temperature::get()

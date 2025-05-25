@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "MovingAverage.hpp"
 
 #include "led.hpp"
 #include "system.hpp"
@@ -11,7 +12,7 @@ static System sys;
 
 static Led led;
 static Temperature LM35;
-static Humidity DHT11;
+static Humidity DHT;
 
 static int system_isOn;
 static float system_temperature;
@@ -32,13 +33,13 @@ void loop()
   system_isOn = sys.get_system_isOn();
   
   led.led(system_isOn, sys.get_system_flood(), sys.get_system_heat());
+  LM35.read();
+  DHT.read();
   
   if (system_isOn)
   {
-    LM35.read();
-    DHT11.read();
     system_temperature = LM35.get();
-    system_humidity = DHT11.get();
+    system_humidity = DHT.get();
 
     timeStop = millis();
     if (timeStop - timeStart >= 2000)

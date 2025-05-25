@@ -12,6 +12,8 @@ enum Heat
 class System
 {
 private:
+    const uint8_t VCC = 12;
+
     int system_isOn = 0;
     Flood system_flood = FLOOD;
     Heat system_heat = HI;

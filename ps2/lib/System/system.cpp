@@ -1,4 +1,4 @@
-#include "system.hpp" 
+#include "system.hpp"
 
 void System::read_serial()
 {
