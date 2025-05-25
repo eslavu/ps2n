@@ -1,6 +1,7 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
+#include <stdio.h>
 #include <Arduino.h>
 
 enum Flood
@@ -14,7 +15,7 @@ class System
 private:
     const uint8_t VCC = 12;
 
-    int system_isOn = 0;
+    bool system_isOn = true;
     Flood system_flood = FLOOD;
     Heat system_heat = HI;
 

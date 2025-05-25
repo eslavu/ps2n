@@ -14,13 +14,17 @@ private:
     const uint8_t DHT11_DATA = 15; // A1
     MovingAverage sma = MovingAverage(5);
 
+    int *values;
     int humidity = 0;
+    int temperature = 0;
 
 public:
     Humidity();
 
     void read();
-    int get();
+    int* get();
+
+    ~Humidity();
 };
 
 #endif
