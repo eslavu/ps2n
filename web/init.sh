@@ -8,7 +8,7 @@ ZIP_FILE="ps2_web.zip"
 
 if [ "$1" = "deploy" ];
 then
-	pip freeze > requirements.txt
+	python3 -m pip freeze > requirements.txt
 	zip -r $ZIP_FILE .
 
 	az group create --name $RESOURCE_GROUP --location $LOCATION
@@ -24,6 +24,11 @@ then
 	  --plan $PLAN_NAME \
 	  --name $APP_NAME \
 	  --runtime "PYTHON|3.10"
+
+	az webapp config set \
+	  --resource-group $RESOURCE_GROUP \
+	  --name $APP_NAME \
+	  --startup-file "gunicorn app:app --bind=0.0.0.0 --workers=1"
 
 	az webapp deploy \
 	  --resource-group $RESOURCE_GROUP \
