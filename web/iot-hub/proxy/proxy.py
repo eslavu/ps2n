@@ -9,6 +9,9 @@ import smtplib
 from email.mime.text import MIMEText
 from datetime import datetime, timedelta
 
+from dotenv import load_dotenv
+load_dotenv()
+
 app = Flask(__name__)
 
 SERIAL_PORT = '/dev/ttyACM0'
