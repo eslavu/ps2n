@@ -21,6 +21,7 @@ static float system_temperature;
 void setup()
 {
   Serial.begin(9600);
+  sys.load_EEPROM();
 }
 
 // sudo chmod a+rw /dev/ttyACM0
@@ -43,5 +44,7 @@ void loop()
       Serial.print(",hum:");
       Serial.print(system_humidity);
       Serial.print('\n');
+
+      sys.save_status();
   }
 }
