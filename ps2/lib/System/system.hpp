@@ -43,6 +43,7 @@ private:
     unsigned long last_alert = 0;
 
     void save_alert(unsigned long);
+    void log();
 
 public:
     System() {}
@@ -54,7 +55,6 @@ public:
 
     void save_status();
     void load_EEPROM();
-    void log();
 };
 
 #endif
