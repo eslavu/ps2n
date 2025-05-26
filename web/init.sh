@@ -1,14 +1,5 @@
 #!/bin/bash
 
-***REMOVED***
-
-***REMOVED***
-***REMOVED***
-
-***REMOVED***
-***REMOVED***
-***REMOVED***
-
 if [ "$1" = "kill" ];
 then
     pkill -f proxy.py
