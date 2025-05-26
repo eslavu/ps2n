@@ -1,5 +1,5 @@
 import requests
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, request
 import socket
 
 def get_local_ip():
@@ -17,27 +17,23 @@ app = Flask(__name__)
 
 LOCAL_PROXY_URL = f"http://{get_local_ip()}:5000"
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    # Handle ON/OFF button form
+    if request.method == 'POST':
+        action = request.form.get('command')
+        if action in ['ON', 'OFF']:
+            try:
+                requests.post(f"{LOCAL_PROXY_URL}/command", json={'command': action})
+            except Exception as e:
+                print(f"Error sending command: {e}")
 
-@app.route('/data')
-def get_data():
+    # Always fetch fresh data from proxy
     try:
         resp = requests.get(f"{LOCAL_PROXY_URL}/data")
         resp.raise_for_status()
-        return jsonify(resp.json())
+        sensor_data = resp.json()
     except Exception as e:
-        return jsonify({'temperature': None, 'humidity': None, 'error': str(e)})
+        sensor_data = {'temperature': None, 'humidity': None, 'system_state': False, 'error': str(e)}
 
-@app.route('/command', methods=['POST'])
-def send_command():
-    cmd = request.json.get('command')
-    if cmd not in ['ON', 'OFF']:
-        return jsonify({'status': 'error', 'message': 'Invalid command'}), 400
-    try:
-        resp = requests.post(f"{LOCAL_PROXY_URL}/command", json={'command': cmd})
-        resp.raise_for_status()
-        return jsonify(resp.json())
-    except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
+    return render_template('index.html', **sensor_data)

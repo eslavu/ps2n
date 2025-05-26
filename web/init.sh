@@ -17,11 +17,9 @@ then
     gunicorn --reload --capture-output --log-level debug --bind 0.0.0.0:8000 app:app &
 
     cd ..
-    LOCAL_IP=$(python3 -c 
-    "import socket;
-    s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM);
-    s.connect(('8.8.8.8', 80));
-    print(s.getsockname()[0]);
-    s.close()")
-    echo "App deployed at: http://$LOCAL_IP:8000 !"
+    LOCAL_IP=$(python3 -c "import socket; s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM); s.connect(('8.8.8.8', 80)); print(s.getsockname()[0]); s.close()")
+    
+    URL="http://$LOCAL_IP:8000"
+    echo $URL
+    xdg-open $URL
 fi

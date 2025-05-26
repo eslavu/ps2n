@@ -2,46 +2,29 @@
 <html>
 
 <head>
-    <title>Temp & Humidity Monitor</title>
-    <script>
-        async function fetchData()
-        {
-            const res = await fetch('/data');
-            const data = await res.json();
-            document.getElementById('temp').innerText = data.temperature !== null ? data.temperature.toFixed(1) + ' °C' : 'N/A';
-            document.getElementById('hum').innerText = data.humidity !== null ? data.humidity.toFixed(1) + ' %' : 'N/A';
-            document.getElementById('ledButton').innerText = data.led_state ? 'Turn OFF' : 'Turn ON';
-        }
-
-        async function toggleOn()
-        {
-            const btn = document.getElementById('onToggle');
-            const current = btn.innerText.includes('OFF');
-            const cmd = current ? 'OFF' : 'ON';
-
-            const res = await fetch('/command',
-            {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({command: cmd})
-            });
-
-            if (res.ok)
-                fetchData();
-            else
-                alert('Failed to send command');
-        }
-
-        setInterval(fetchData, 2000);
-        window.onload = fetchData;
-    </script>
+    <meta http-equiv="refresh" content="2">
+    <title>Sensor Dashboard</title>
 </head>
 
 <body>
-    <h1>Temperature & Humidity Monitor</h1>
-    <p>Temperature: <span id="temp">Loading...</span></p>
-    <p>Humidity: <span id="hum">Loading...</span></p>
-    <button id="onToggle" onclick="toggleOn()">Loading...</button>
+    {% if not system_state %}
+        <h2>System is inactive.</h2>
+    {% else %}
+        <h1>Temperature: {{ temperature if temperature is not none else 'N/A' }}°C</h1>
+        <h1>Humidity: {{ humidity if humidity is not none else 'N/A' }}%</h1>
+    {% endif %}
+
+    {% if error %}
+        <p style="color: red;">Error: {{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+        {% if system_state %}
+            <button type="submit" name="command" value="OFF">Turn OFF</button>
+        {% else %}
+            <button type="submit" name="command" value="ON">Turn ON</button>
+        {% endif %}
+    </form>
 </body>
 
 </html>

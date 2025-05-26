@@ -15,9 +15,9 @@ class System
 private:
     const uint8_t VCC = 12;
 
-    bool system_isOn = true;
-    Flood system_flood = FLOOD;
-    Heat system_heat = HI;
+    bool system_isOn = false;
+    Flood system_flood = DRY;
+    Heat system_heat = LO;
 
 public:
     System() {}
