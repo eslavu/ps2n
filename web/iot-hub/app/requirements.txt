@@ -100,6 +100,7 @@ distro==1.7.0
 distro-info==1.1+ubuntu0.2
 docutils==0.17.1
 domain-coordinator==0.10.0
+dotenv==0.9.9
 dulwich==0.20.31
 duplicity==0.8.21
 dwb-msgs==1.1.18
@@ -261,6 +262,7 @@ pytest-cov==3.0.0
 python-apt==2.4.0+ubuntu4
 python-dateutil==2.9.0.post0
 python-debian==0.1.43+ubuntu1.1
+python-dotenv==1.1.0
 python-gitlab==2.10.1
 python-qt-binding==1.1.2
 pythran==0.10.0

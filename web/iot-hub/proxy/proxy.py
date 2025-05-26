@@ -9,8 +9,9 @@ import smtplib
 from email.mime.text import MIMEText
 from datetime import datetime, timedelta
 
-from dotenv import load_dotenv
-load_dotenv()
+from dotenv import load_dotenv, find_dotenv
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
 
 app = Flask(__name__)
 

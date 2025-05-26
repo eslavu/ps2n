@@ -1,7 +1,10 @@
 import requests
 from flask import Flask, render_template, request
-import socket
 import os
+
+from dotenv import load_dotenv, find_dotenv
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
 
 LOCAL_IP = os.getenv('LOCAL_IP')
 
