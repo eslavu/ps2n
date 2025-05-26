@@ -5,7 +5,7 @@ import time
 
 app = Flask(__name__)
 
-SERIAL_PORT = '/dev/ttyACM0'  # Adjust for your system, e.g. COM3 on Windows
+SERIAL_PORT = '/dev/ttyACM0'
 BAUD_RATE = 9600
 ser = None
 
@@ -17,18 +17,18 @@ data = {
     'heat_level': None
 }
 
-def get_flood_level(humidity):
+def get_flood_level(humidity): # DRY / MEDIUM / FLOOD
     if humidity < 50:
         return 0
-    elif humidity <= 75:
+    elif humidity < 75:
         return 1
     else:
         return 2
 
-def get_heat_level(temp):
+def get_heat_level(temp): # LO / GOOD / HI
     if temp < 15:
         return 0
-    elif temp <= 26:
+    elif temp < 26:
         return 1
     else:
         return 2

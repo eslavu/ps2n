@@ -21,7 +21,6 @@ static float system_temperature;
 void setup()
 {
   Serial.begin(9600);
-  Serial.println("ready");
 }
 
 // sudo chmod a+rw /dev/ttyACM0

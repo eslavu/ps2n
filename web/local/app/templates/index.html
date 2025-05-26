@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="refresh" content="2">
+    <title>Sensor Dashboard</title>
+</head>
+
+<body>
+    {% if not system_state %}
+        <h2>System is inactive.</h2>
+    {% else %}
+        <h1>Temperature: {{ temperature if temperature is not none else 'N/A' }}°C</h1>
+        <h1>Humidity: {{ humidity if humidity is not none else 'N/A' }}%</h1>
+    {% endif %}
+
+    {% if error %}
+        <p style="color: red;">Error: {{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+        {% if system_state %}
+            <button type="submit" name="command" value="OFF">Turn OFF</button>
+        {% else %}
+            <button type="submit" name="command" value="ON">Turn ON</button>
+        {% endif %}
+    </form>
+</body>
+
+</html>
