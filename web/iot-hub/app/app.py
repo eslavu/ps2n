@@ -1,12 +1,15 @@
 import requests
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 import os
+import time
 
 from dotenv import load_dotenv, find_dotenv
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
 
 LOCAL_IP = os.getenv('LOCAL_IP')
+
+EEPROM_LOG_FILE = os.getenv('EEPROM_LOG_FILE')
 
 app = Flask(__name__)
 
@@ -30,3 +33,12 @@ def index():
         sensor_data = {'temperature': None, 'humidity': None, 'system_state': False, 'error': str(e)}
 
     return render_template('index.html', **sensor_data)
+
+@app.route('/log')
+def download_log():
+    time.sleep(3)
+    log_path = os.path.join(os.path.dirname(__file__), EEPROM_LOG_FILE)
+    if os.path.exists(log_path):
+        return send_file(log_path, as_attachment=False)
+    else:
+        return "Log file not found.", 404

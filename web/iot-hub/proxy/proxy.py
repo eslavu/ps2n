@@ -38,6 +38,8 @@ EMAIL_PASSWORD = os.getenv('PS2_EMAIL_PASSWORD')
 last_email_time = datetime.min
 EMAIL_COOLDOWN = timedelta(hours=1)
 
+EEPROM_LOG_FILE = os.getenv('EEPROM_LOG_FILE')
+
 data = {
     'temperature': None,
     'humidity': None,
@@ -45,6 +47,9 @@ data = {
     'flood_level': None,
     'heat_level': None
 }
+
+eeprom_buffer = ""
+eeprom_count = 0
 
 def flood_email(humidity):
     global last_email_time
@@ -72,7 +77,7 @@ def flood_email(humidity):
 def get_flood_level(humidity):
     if humidity < 40:
         return 0
-    elif humidity < 50:
+    elif humidity < 75:
         return 1
     else:
         flood_email(humidity)
@@ -85,6 +90,47 @@ def get_heat_level(temp):
         return 1
     else:
         return 2
+    
+def parse_eeprom_dump(buffer):
+    try:
+        sections = buffer.strip().split('%')
+        if len(sections) < 3:
+            return
+
+        status_lines = sections[1].strip().splitlines()
+        alert_lines = sections[2].strip().splitlines()
+
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        log_entry = f"--- EEPROM Dump @ {now} ---\n"
+
+        log_entry += "Status Messages:\n"
+        for line in status_lines:
+            parts = line.split(',')
+            if len(parts) == 2:
+                try:
+                    temp = float(parts[0])
+                    hum = float(parts[1])
+                    log_entry += f"{temp:.1f}°C, {hum:.1f}%\n"
+                except ValueError:
+                    continue
+
+        log_entry += "Flood Alerts (Timestamps):\n"
+        for line in alert_lines:
+            try:
+                ts = int(line)
+                ts_str = datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+                log_entry += f"{ts_str} ({ts})\n"
+            except ValueError:
+                continue
+
+        log_entry += "\n"
+
+        with open(EEPROM_LOG_FILE, 'w') as f:
+            f.write(log_entry)
+
+        print("EEPROM dump parsed and saved.")
+    except Exception as e:
+        print(f"Error parsing EEPROM dump: {e}")
 
 def connect_serial():
     global ser
@@ -98,6 +144,7 @@ def connect_serial():
 
 def read_serial():
     global data, ser
+    global eeprom_buffer, eeprom_count
     
     while True:
         if ser is None:
@@ -108,44 +155,55 @@ def read_serial():
             
             if line:
                 print(f"Serial data: {line}")
-                parts = line.split(',')
-                if len(parts) >= 2:
-                    if data['system_state']:
-                        temp_part = parts[0].split(':')
-                        hum_part = parts[1].split(':')
-                        if temp_part[0] == 'temp' and hum_part[0] == 'hum':
+
+                if line == "%":
+                    eeprom_count += 1
+                    eeprom_buffer += "%\n"
+                    if eeprom_count == 3:
+                        parse_eeprom_dump(eeprom_buffer)
+                        eeprom_buffer = ""
+                        eeprom_count = 0
+                elif eeprom_count > 0:
+                    eeprom_buffer += line + "\n"
+                else:
+                    parts = line.split(',')
+                    if len(parts) >= 2:
+                        if data['system_state']:
+                            temp_part = parts[0].split(':')
+                            hum_part = parts[1].split(':')
+                            if temp_part[0] == 'temp' and hum_part[0] == 'hum':
+                                try:
+                                    temperature = float(temp_part[1])
+                                    humidity = float(hum_part[1])
+                                except ValueError:
+                                    continue
+
+                                data['temperature'] = temperature
+                                data['humidity'] = humidity
+
+                                flood = get_flood_level(humidity)
+                                heat = get_heat_level(temperature)
+                                data['flood_level'] = flood
+                                data['heat_level'] = heat
+
+                                message = f"{flood},{heat}\n"
+                                ser.write(message.encode())
+
                             try:
-                                temperature = float(temp_part[1])
-                                humidity = float(hum_part[1])
-                            except ValueError:
-                                continue
-
-                            data['temperature'] = temperature
-                            data['humidity'] = humidity
-
-                            flood = get_flood_level(humidity)
-                            heat = get_heat_level(temperature)
-                            data['flood_level'] = flood
-                            data['heat_level'] = heat
-
-                            message = f"{flood},{heat}\n"
-                            ser.write(message.encode())
-
-                        try:
-                            twin_patch = {
-                                "properties": {
-                                    "reported": {
-                                        "temperature": temperature,
-                                        "humidity": humidity,
-                                        "system_state": data['system_state'],
-                                        "flood_level": flood,
-                                        "heat_level": heat
+                                twin_patch = {
+                                    "properties": {
+                                        "reported": {
+                                            "temperature": temperature,
+                                            "humidity": humidity,
+                                            "system_state": data['system_state'],
+                                            "flood_level": flood,
+                                            "heat_level": heat
+                                        }
                                     }
                                 }
-                            }
-                            registry_manager.update_twin(DEVICE_ID, twin_patch, "*")
-                        except Exception as e:
-                            print(f"Error updating IoT Hub twin: {e}")
+                                registry_manager.update_twin(DEVICE_ID, twin_patch, "*")
+                            except Exception as e:
+                                print(f"Error updating IoT Hub twin: {e}")
 
         except Exception as e:
             print(f"Serial read error: {e}")
@@ -180,6 +238,22 @@ def send_command():
         registry_manager.update_twin(DEVICE_ID, twin_patch, "*")
 
         return jsonify({'status': 'success'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+    
+@app.route('/log', methods=['POST'])
+def generate_log():
+    global ser
+    if ser is None:
+        return jsonify({'status': 'error', 'message': 'Serial not connected'}), 500
+
+    try:
+        global eeprom_count, eeprom_mode
+        eeprom_count = 0
+        eeprom_mode = 0
+        ser.write(b'LOG\n')
+
+        return jsonify({'status': 'success'}), 200
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
 

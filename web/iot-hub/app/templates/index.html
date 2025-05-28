@@ -21,6 +21,8 @@
     <form method="POST">
         {% if system_state %}
             <button type="submit" name="command" value="OFF">Turn OFF</button>
+            <br />
+            <button onclick="window.open('/log', '_blank')">log</button>
         {% else %}
             <button type="submit" name="command" value="ON">Turn ON</button>
         {% endif %}

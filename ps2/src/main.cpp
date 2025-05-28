@@ -22,6 +22,7 @@ void setup()
 {
   Serial.begin(9600);
   sys.load_EEPROM();
+  sys.log();
 }
 
 // sudo chmod a+rw /dev/ttyACM0
@@ -39,12 +40,12 @@ void loop()
   
   if (system_isOn)
   {
-      Serial.print("temp:");
-      Serial.print(system_temperature);
-      Serial.print(",hum:");
-      Serial.print(system_humidity);
-      Serial.print('\n');
+    Serial.print("temp:");
+    Serial.print(system_temperature);
+    Serial.print(",hum:");
+    Serial.print(system_humidity);
+    Serial.print('\n');
 
-      sys.save_status();
+    sys.save_status(system_temperature, system_humidity);
   }
 }

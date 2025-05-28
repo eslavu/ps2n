@@ -11,8 +11,8 @@
 
 struct StatusMessage
 {
-    byte flood = 0;
-    byte heat = 0;
+    byte temperature = 0;
+    byte humidity = 0;
 };
 
 struct FloodAlert
@@ -43,7 +43,6 @@ private:
     unsigned long last_alert = 0;
 
     void save_alert(unsigned long);
-    void log();
 
 public:
     System() {}
@@ -53,8 +52,10 @@ public:
     Flood get_system_flood();
     Heat get_system_heat();
 
-    void save_status();
+    void log();
+    void save_status(float, int);
     void load_EEPROM();
+    void clear_EEPROM();
 };
 
 #endif
