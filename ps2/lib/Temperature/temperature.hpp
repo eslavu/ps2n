@@ -14,7 +14,7 @@ class Temperature
 {
 private:
     const uint8_t LM35_VOUT = A0;
-    MovingAverage sma = MovingAverage(5);
+    MovingAverage sma = MovingAverage(3);
 
     float scaling;
     float temperature = 0;

@@ -58,7 +58,7 @@ def flood_email(humidity):
         print("Cooldown active, email not sent.")
         return
 
-    body = f"A flood condition was detected.\n\nHumidity: {humidity:.1f}%"
+    body = f"INUNDAȚIE DETECTATĂ!\n\nUmiditate: {humidity}%"
     msg = MIMEText(body)
     msg['Subject'] = EMAIL_SUBJECT
     msg['From'] = EMAIL_FROM
@@ -69,7 +69,7 @@ def flood_email(humidity):
             server.starttls()
             server.login(EMAIL_USERNAME, EMAIL_PASSWORD)
             server.send_message(msg)
-        print(f"Flood alert email sent to {EMAIL_TO}")
+        print(f"Alert email sent to {EMAIL_TO}")
         last_email_time = now
     except Exception as e:
         print(f"Error sending email: {e}")
@@ -77,7 +77,7 @@ def flood_email(humidity):
 def get_flood_level(humidity):
     if humidity < 40:
         return 0
-    elif humidity < 75:
+    elif humidity < 50:
         return 1
     else:
         flood_email(humidity)
@@ -101,9 +101,9 @@ def parse_eeprom_dump(buffer):
         alert_lines = sections[2].strip().splitlines()
 
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        log_entry = f"--- EEPROM Dump @ {now} ---\n"
+        log_entry = f"--- Memoria sistemului @ {now} ---\n"
 
-        log_entry += "Status Messages:\n"
+        log_entry += "Status:\n"
         for line in status_lines:
             parts = line.split(',')
             if len(parts) == 2:
@@ -114,7 +114,7 @@ def parse_eeprom_dump(buffer):
                 except ValueError:
                     continue
 
-        log_entry += "Flood Alerts (Timestamps):\n"
+        log_entry += "Inundații detectate:\n"
         for line in alert_lines:
             try:
                 ts = int(line)

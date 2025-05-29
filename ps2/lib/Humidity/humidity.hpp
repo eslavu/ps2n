@@ -12,7 +12,7 @@ class Humidity
 {
 private:
     const uint8_t DHT11_DATA = 15; // A1
-    MovingAverage sma = MovingAverage(5);
+    MovingAverage sma = MovingAverage(3);
 
     int *values;
     int humidity = 0;

@@ -1,0 +1,21 @@
+body
+{
+    background-color: aliceblue;
+    text-align: center;
+
+    font-family: monospace;
+    font-size: x-large;
+    color: darkslategrey;
+}
+
+button[type="submit"]
+{
+    background-color: darkslategrey;
+
+    font-size: large;
+    color: aliceblue;
+
+    border: 0px;
+    margin: 0px;
+    margin-top: 5px;    margin-bottom: 5px;
+}

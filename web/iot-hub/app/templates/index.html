@@ -2,16 +2,18 @@
 <html>
 
 <head>
+    <meta charset="UTF-8"> 
     <meta http-equiv="refresh" content="2">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Sensor Dashboard</title>
 </head>
 
 <body>
     {% if not system_state %}
-        <h2>System is inactive.</h2>
+        <h2>Sistem oprit...</h2>
     {% else %}
-        <h1>Temperature: {{ temperature if temperature is not none else 'N/A' }}°C</h1>
-        <h1>Humidity: {{ humidity if humidity is not none else 'N/A' }}%</h1>
+        <h1>Temperatură: {{ temperature if temperature is not none else 'N/A' }}°C</h1>
+        <h1>Umiditate: {{ humidity if humidity is not none else 'N/A' }}%</h1>
     {% endif %}
 
     {% if error %}
@@ -20,11 +22,11 @@
 
     <form method="POST">
         {% if system_state %}
-            <button type="submit" name="command" value="OFF">Turn OFF</button>
+            <button type="submit" name="command" value="OFF">OPRIRE</button>
             <br />
-            <button onclick="window.open('/log', '_blank')">log</button>
+            <button type="submit" onclick="window.open('/log', '_blank')">ISTORIC</button>
         {% else %}
-            <button type="submit" name="command" value="ON">Turn ON</button>
+            <button type="submit" name="command" value="ON">PORNIRE</button>
         {% endif %}
     </form>
 </body>

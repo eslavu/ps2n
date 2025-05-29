@@ -22,7 +22,6 @@ void setup()
 {
   Serial.begin(9600);
   sys.load_EEPROM();
-  sys.log();
 }
 
 // sudo chmod a+rw /dev/ttyACM0
